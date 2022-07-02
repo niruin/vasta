@@ -1,0 +1,13 @@
+<svg width="24" height="24" fill="fff" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="ic_chevron_1" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6-6-6z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <mask id="ic_chevron_2" fill="#fff">
+            <use xlink:href="#ic_chevron_1"/>
+        </mask>
+        <g mask="url(#ic_chevron_2)" fill="#fff">
+            <path d="M0 0h24v24H0z"/>
+        </g>
+    </g>
+</svg>
