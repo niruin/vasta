@@ -1,79 +1,115 @@
-const User = require('../models/user-model')
-const bcrypt = require('bcryptjs')
-const Role = require('../models/role-model')
-const tokenService = require('./token-service')
+const User = require('../models/user-model');
+const bcrypt = require('bcryptjs');
+const Role = require('../models/role-model');
+const tokenService = require('./token-service');
+const BILLS = {
+  USDT: {
+    ERC20: '1FsP3gUixv7LSQimeXjFHHkeosudtERC20',
+    BEP20: '1FsP3gUixv7LSQimeXjFHHkeousdtBEP20',
+    TRC20: '1FsP3gUixv7LSQimeXjFHHkemusdtTRC20',
+  },
+  BTC: {
+    BTC: '1FsP3gUixv7LSQimeXjFHHkemdbtcBTC',
+    ERC20: '1FsP3gUixv7LSQimeXjFHHkemdbtcERC20',
+    MATIC: '1FsP3gUixv7LSQimeXjFHHkemobtcMATIC',
+  },
+  ETH: {
+    ERC20: '1FsP3gUixv7LSQimeXjFHHkemoethERC20',
+    BEP20: '1FsP3gUixv7LSQimeXjFHHkemdethBEP20',
+    MATIC: '1FsP3gUixv7LSQimeXjFHHkemdethMATIC',
+  },
+  LTC: {
+    LTC: '1FsP3gUixv7LSQimeXjFHHkemdltcLTC',
+    BEP20: '1FsP3gUixv7LSQimeXjFHHkemdltcBEP20',
+  },
+  XRP: {
+    XRP: '1FsP3gUixv7LSQimeXjFHHkemdxrpXRP',
+    BEP20: '1FsP3gUixv7LSQimeXjFHHkemoxrpBEP20',
+  },
+}
 
 class UserService {
-  async registration(username, password){
-    const isUnique = await User.findOne({username})
+  async registration(username, password) {
+    const isUnique = await User.findOne({username});
     if (isUnique) {
-      const error = new Error()
-      error.message = `Username ${username} already use`
-      throw error
+      const error = new Error();
+      error.message = `Username ${username} already use`;
+      throw error;
     }
 
-    const hashPassword = bcrypt.hashSync(password, 7)
-    const roleUser = await Role.findOne({value: 'USER'})
-    const newUser = new User({username, password: hashPassword, role: roleUser.value})
-    await newUser.save()
-    const user = await User.findOne({username})
+    const hashPassword = bcrypt.hashSync(password, 7);
+    const roleUser = await Role.findOne({value: 'USER'});
+    const newUser = new User({username, password: hashPassword, role: roleUser.value});
+    await newUser.save();
+    const user = await User.findOne({username});
 
-    const tokens = tokenService.generateTokens({id: user._id, role:user.role, username: user.username})
-    await tokenService.saveToken(user._id, tokens.refreshToken)
+    const tokens = tokenService.generateTokens({id: user._id, role: user.role, username: user.username});
+    await tokenService.saveToken(user._id, tokens.refreshToken);
 
     return {
       ...tokens,
       id: user._id,
       role: user.role,
-      username: user.username
-    }
+      username: user.username,
+    };
   }
 
   async login(username, password) {
-    const user = await User.findOne({username})
+    const user = await User.findOne({username});
     if (!user) {
-      const error = new Error()
-      error.message = `Username ${username} not found`
-      throw error
+      const error = new Error();
+      error.message = `Username ${username} not found`;
+      throw error;
     }
-    const isValidPassword = bcrypt.compareSync(password, user.password)
+    const isValidPassword = bcrypt.compareSync(password, user.password);
     if (!isValidPassword) {
-      const error = new Error()
-      error.message = 'Password incorrect'
-      throw error
+      const error = new Error();
+      error.message = 'Password incorrect';
+      throw error;
     }
-    const tokens = tokenService.generateTokens({id: user._id, role:user.role, username: user.username})
-    await tokenService.saveToken(user._id, tokens.refreshToken)
+    const tokens = tokenService.generateTokens({id: user._id, role: user.role, username: user.username});
+    await tokenService.saveToken(user._id, tokens.refreshToken);
 
     return {
       token: tokens.accessToken,
-      refreshToken: tokens.refreshToken
-    }
+      refreshToken: tokens.refreshToken,
+    };
+  }
+
+  async deposit(usernameId, payload) {
+    const user = await User.findOne({_id: usernameId})
+    const {currency, network} = payload
+    const address = BILLS[currency][network]
+    const date = new Date();
+
+    await User.findByIdAndUpdate(user._id, { $push: {deposits: [{...payload, date, address }]}});
+
+    return address;
   }
 
   async logout(refreshToken) {
-    await tokenService.removeToken(refreshToken)
+    await tokenService.removeToken(refreshToken);
   }
 
   async refresh(refreshToken) {
-    if(!refreshToken) {
-      const error = new Error()
-      error.message = 'user  unauthorized'
-      throw error
+    if (!refreshToken) {
+      const error = new Error();
+      error.message = 'user  unauthorized';
+      throw error;
     }
 
-    const userData = tokenService.validateAccessRefresh(refreshToken)
-    const tokenFromDB = tokenService.findToken(refreshToken)
+    const userData = tokenService.validateAccessRefresh(refreshToken);
+    const tokenFromDB = tokenService.findToken(refreshToken);
 
-    if(!userData || !tokenFromDB) {
-      const error = new Error()
-      error.message = 'user  unauthorized'
-      throw error
+    if (!userData || !tokenFromDB) {
+      const error = new Error();
+      error.message = 'user  unauthorized';
+      throw error;
     }
-    const user = await User.findById(userData.id)
-    const tokens = tokenService.generateTokens({id: userData.id, username: user.username, role: user.role})
-    return {...tokens}
+    const user = await User.findById(userData.id);
+    const tokens = tokenService.generateTokens({id: userData.id, username: user.username, role: user.role});
+    return {...tokens};
   }
 }
 
-module.exports = new UserService()
+module.exports = new UserService();

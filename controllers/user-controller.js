@@ -72,10 +72,24 @@ class UserController {
   async getUser(req, res) {
     try {
       const user = await User.find({username: req.user.username})
-      const {role, username, _id: id} = user[0]
-      res.json({success: 1, user: {id, role, username}})
+      const {role, username, _id: id, balance, deposits} = user[0]
+      res.json({success: 1, user: {id, role, username, balance, deposits: deposits.reverse()}})
     } catch (e) {
       return res.status(500).json({success: 0, message: 'Error getUser'})
+    }
+  }
+
+  async getBills(req, res) {
+    res.json({success: 1})
+  }
+
+  async deposit(req, res) {
+    try {
+      const {amount, currency, network, usernameId} = req.body
+      const address = await userService.deposit(usernameId, {amount, currency, network})
+      res.json({success: 1, address})
+    } catch (e) {
+      return res.status(500).json({success: 0, message: 'Failed to add deposit1'})
     }
   }
 }

@@ -4,7 +4,7 @@ const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require('../config')
 
 class TokenService {
   generateTokens(payload) {
-    const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {expiresIn: '30s'})
+    const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {expiresIn: '30d'}) // 30s
     const refreshToken = jwt.sign(payload, REFRESH_TOKEN_SECRET, {expiresIn: '30d'})
 
     return {
