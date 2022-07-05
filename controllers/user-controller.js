@@ -1,5 +1,6 @@
 const User = require('../models/user-model')
 const userService = require('../services/user-service')
+const {NETWORKS, COINS} = require('./dictionary')
 
 class UserController {
   async registration(req, res) {
@@ -79,8 +80,8 @@ class UserController {
     }
   }
 
-  async getBills(req, res) {
-    res.json({success: 1})
+  async getDictionary(req, res) {
+    res.json({success: 1, dictionary: {coins: COINS, networks: NETWORKS}})
   }
 
   async deposit(req, res) {

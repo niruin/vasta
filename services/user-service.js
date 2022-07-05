@@ -2,31 +2,7 @@ const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
 const Role = require('../models/role-model');
 const tokenService = require('./token-service');
-const BILLS = {
-  USDT: {
-    ERC20: '1FsP3gUixv7LSQimeXjFHHkeosudtERC20',
-    BEP20: '1FsP3gUixv7LSQimeXjFHHkeousdtBEP20',
-    TRC20: '1FsP3gUixv7LSQimeXjFHHkemusdtTRC20',
-  },
-  BTC: {
-    BTC: '1FsP3gUixv7LSQimeXjFHHkemdbtcBTC',
-    ERC20: '1FsP3gUixv7LSQimeXjFHHkemdbtcERC20',
-    MATIC: '1FsP3gUixv7LSQimeXjFHHkemobtcMATIC',
-  },
-  ETH: {
-    ERC20: '1FsP3gUixv7LSQimeXjFHHkemoethERC20',
-    BEP20: '1FsP3gUixv7LSQimeXjFHHkemdethBEP20',
-    MATIC: '1FsP3gUixv7LSQimeXjFHHkemdethMATIC',
-  },
-  LTC: {
-    LTC: '1FsP3gUixv7LSQimeXjFHHkemdltcLTC',
-    BEP20: '1FsP3gUixv7LSQimeXjFHHkemdltcBEP20',
-  },
-  XRP: {
-    XRP: '1FsP3gUixv7LSQimeXjFHHkemdxrpXRP',
-    BEP20: '1FsP3gUixv7LSQimeXjFHHkemoxrpBEP20',
-  },
-}
+const {BILLS} = require('./consts');
 
 class UserService {
   async registration(username, password) {

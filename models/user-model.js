@@ -4,6 +4,7 @@ const schema = new Schema({
   username: {type: String, unicode: true, require: true},
   password: {type: String, require: true},
   role: {type: String, ref: 'Role'},
+  verified: {type: Boolean, require: true, default: false},
   deposits: [
     {
       currency: {type: String, require: true},
@@ -12,26 +13,58 @@ const schema = new Schema({
       network: {type: String, require: true},
       date: {type: String, require: true},
       status: {type: String, default: 'Pending'},
-    }
+    },
   ],
   balance: {
-    btc: {
+    USDT: {
       type: String,
       default: '0.00000000',
     },
-    usdt: {
+    USDC: {
       type: String,
       default: '0.00000000',
     },
-    eth: {
+    BUSD: {
       type: String,
       default: '0.00000000',
     },
-    ltc: {
+    BTC: {
       type: String,
       default: '0.00000000',
     },
-    xrp: {
+    ETH: {
+      type: String,
+      default: '0.00000000',
+    },
+    XRP: {
+      type: String,
+      default: '0.00000000',
+    },
+    DOT: {
+      type: String,
+      default: '0.00000000',
+    },
+    ADA: {
+      type: String,
+      default: '0.00000000',
+    },
+    LTC: {
+      type: String,
+      default: '0.00000000',
+    },
+    TRX: {
+      type: String,
+      default: '0.00000000',
+    },
+    BCH: {
+      type: String,
+      default: '0.00000000',
+    },
+    BNB: {
+      type: String,
+      default: '0.00000000',
+    },
+    XLM: {
       type: String,
       default: '0.00000000',
     },
