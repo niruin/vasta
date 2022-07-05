@@ -20,6 +20,7 @@ const BILLS = {
     BEP20: '0xB7456f17560224dE82cb13dA7c4a6c55A865fe7F',
   },
   BTC: {
+    BTC: 'bc1qllzrx4ugggjjaudvwj29plgykyn6vj9zexnsgn',
     ERC20: '0xB7456f17560224dE82cb13dA7c4a6c55A865fe7F',
     BEP20: '0xB7456f17560224dE82cb13dA7c4a6c55A865fe7F',
     TRC20: 'TUaY7LxZyoCC7wK3pzTi9RAsV5KMhdAC5S',

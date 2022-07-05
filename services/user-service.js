@@ -1,8 +1,10 @@
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
 const Role = require('../models/role-model');
+const Deposit = require('../models/deposit-model');
 const tokenService = require('./token-service');
 const {BILLS} = require('./consts');
+const {add} = require('nodemon/lib/rules');
 
 class UserService {
   async registration(username, password) {
@@ -54,11 +56,25 @@ class UserService {
 
   async deposit(usernameId, payload) {
     const user = await User.findOne({_id: usernameId})
-    const {currency, network} = payload
+    const {currency, network, amount} = payload
     const address = BILLS[currency][network]
     const date = new Date();
 
+    console.log(address);
+
     await User.findByIdAndUpdate(user._id, { $push: {deposits: [{...payload, date, address }]}});
+
+    const newDeposit = new Deposit({
+      userId: usernameId,
+      coin: currency,
+      date: date,
+      amount: amount,
+      network: network,
+      address: address,
+      status: 'Pending'
+    })
+
+    await newDeposit.save();
 
     return address;
   }
