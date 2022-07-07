@@ -2,12 +2,12 @@ const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
 const Role = require('../models/role-model');
 const Deposit = require('../models/deposit-model');
+const Withdraw = require('../models/withdraw-model');
 const tokenService = require('./token-service');
 const {BILLS} = require('./consts');
-const {add} = require('nodemon/lib/rules');
 
 class UserService {
-  async registration(username, password) {
+  async registration(username, password, referral) {
     const isUnique = await User.findOne({username});
     if (isUnique) {
       const error = new Error();
@@ -17,7 +17,7 @@ class UserService {
 
     const hashPassword = bcrypt.hashSync(password, 7);
     const roleUser = await Role.findOne({value: 'USER'});
-    const newUser = new User({username, password: hashPassword, role: roleUser.value});
+    const newUser = new User({username, password: hashPassword, role: roleUser.value, docs: {}});
     await newUser.save();
     const user = await User.findOne({username});
 
@@ -55,32 +55,66 @@ class UserService {
   }
 
   async deposit(usernameId, payload) {
-    const user = await User.findOne({_id: usernameId})
-    const {currency, network, amount} = payload
-    const address = BILLS[currency][network]
+    const user = await User.findOne({_id: usernameId});
+    const {coin, network, amount} = payload;
+    const address = BILLS[coin][network];
     const date = new Date();
-
-    console.log(address);
-
-    await User.findByIdAndUpdate(user._id, { $push: {deposits: [{...payload, date, address }]}});
 
     const newDeposit = new Deposit({
       userId: usernameId,
-      coin: currency,
+      coin: coin,
       date: date,
       amount: amount,
       network: network,
       address: address,
-      status: 'Pending'
-    })
+      status: 'Pending',
+    });
+    const deposit = await newDeposit.save();
+    await User.findByIdAndUpdate(user._id, {$push: {deposits: [{...payload, date, address, id: deposit._id}]}});
 
-    await newDeposit.save();
+    return address;
+  }
+
+  async verification(userId, national, passportId, firstName, lastName, faceImage) {
+    console.log(1)
+    const docs = {
+      national,
+      passportId,
+      firstName,
+      lastName,
+      faceImage,
+    };
+
+    await User.findByIdAndUpdate(userId, {docs});
+    return 1;
+  }
+
+  async withdraw(usernameId, payload) {
+    const user = await User.findOne({_id: usernameId});
+    const {coin, network, amount, address} = payload;
+    const date = new Date();
+
+    const newDeposit = new Withdraw({
+      userId: usernameId,
+      coin: coin,
+      date: date,
+      amount: amount,
+      network: network,
+      address: address,
+      status: 'Pending',
+    });
+    const deposit = await newDeposit.save();
+    await User.findByIdAndUpdate(user._id, {$push: {withdraws: [{...payload, date, id: deposit._id}]}});
 
     return address;
   }
 
   async logout(refreshToken) {
     await tokenService.removeToken(refreshToken);
+  }
+
+  async addReferral(newUserName, referral) {
+    await User.findOneAndUpdate({username: referral}, {$push: {referrals: [newUserName]}});
   }
 
   async refresh(refreshToken) {

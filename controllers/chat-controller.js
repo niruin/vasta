@@ -5,7 +5,8 @@ class ChatController {
   async postMessage(req, res) {
     try {
       const {userId, date, message} = req.body;
-      await chatService.postMessage(userId, date, message);
+      const role = req.query.role
+      await chatService.postMessage(userId, date, message, role);
       res.json({success: 1});
     } catch (e) {
       console.log(e);

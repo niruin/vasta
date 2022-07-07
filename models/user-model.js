@@ -5,9 +5,29 @@ const schema = new Schema({
   password: {type: String, require: true},
   role: {type: String, ref: 'Role'},
   verified: {type: Boolean, require: true, default: false},
+  referrals: [{type: String}],
+  docs: {
+    national: {type: String},
+    passportId: {type: String},
+    firstName: {type: String},
+    lastName: {type: String},
+    faceImage: {type: String},
+  },
   deposits: [
     {
-      currency: {type: String, require: true},
+      id: {type: String, unicode: true, require: true},
+      coin: {type: String, require: true},
+      amount: {type: String, require: true},
+      address: {type: String, require: true},
+      network: {type: String, require: true},
+      date: {type: String, require: true},
+      status: {type: String, default: 'Pending'},
+    },
+  ],
+  withdraws: [
+    {
+      id: {type: String, unicode: true, require: true},
+      coin: {type: String, require: true},
       amount: {type: String, require: true},
       address: {type: String, require: true},
       network: {type: String, require: true},
