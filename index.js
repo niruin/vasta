@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+//const cors = require('cors');
 
 const authRouter = require('./router');
 const {mongoDB} = require('./config');
@@ -10,7 +10,7 @@ const {mongoDB} = require('./config');
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+//app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api', authRouter);
