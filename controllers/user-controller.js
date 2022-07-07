@@ -1,8 +1,6 @@
 const User = require('../models/user-model');
 const userService = require('../services/user-service');
 const {NETWORKS, COINS} = require('./dictionary');
-const https = require('https');
-const axios = require('axios');
 
 class UserController {
   async registration(req, res) {
