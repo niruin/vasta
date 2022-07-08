@@ -5,6 +5,7 @@ const schema = new Schema({
   password: {type: String, require: true},
   role: {type: String, ref: 'Role'},
   verified: {type: Boolean, require: true, default: false},
+  verificationStatus: {type: String, default: 'OFF'}, // SUCCESS, FAILED, REVISION, OFF
   referrals: [{type: String}],
   docs: {
     national: {type: String},
@@ -12,6 +13,7 @@ const schema = new Schema({
     firstName: {type: String},
     lastName: {type: String},
     faceImage: {type: String},
+    passportImage: {type: String},
   },
   deposits: [
     {

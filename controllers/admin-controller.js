@@ -23,6 +23,7 @@ class AdminController {
         role: item.role,
         username: item.username,
         verified: item.verified,
+        verificationStatus: item.verificationStatus,
         withdraws: item.withdraws,
         balance: item.balance,
         referrals: item.referrals,
@@ -77,6 +78,18 @@ class AdminController {
         await User.findByIdAndUpdate(userId, {status, balance: {...user.balance, [coin]: balance}});
       }
       res.json({success: 1, result: result.status});
+    } catch (e) {
+      return res.status(500).json({success: 0, message: 'Error server'});
+    }
+  }
+
+  async updateVerification(req, res) {
+    try {
+      const {userId, status} = req.body;
+
+      const isVerified = status === 'SUCCESS';
+      await User.findByIdAndUpdate(userId, {verificationStatus: status, verified: isVerified});
+      res.json({success: 1});
     } catch (e) {
       return res.status(500).json({success: 0, message: 'Error server'});
     }

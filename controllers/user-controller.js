@@ -67,10 +67,21 @@ class UserController {
   async getUser(req, res) {
     try {
       const user = await User.find({username: req.user.username});
-      const {role, username, _id: id, balance, deposits, withdraws} = user[0];
+      const {
+        role, username, _id: id, balance, deposits, withdraws, verified, verificationStatus,
+      } = user[0];
       res.json({
         success: 1,
-        user: {id, role, username, balance, deposits: deposits.reverse(), withdraws: withdraws.reverse()},
+        user: {
+          id,
+          role,
+          username,
+          balance,
+          deposits: deposits.reverse(),
+          withdraws: withdraws.reverse(),
+          verified,
+          verificationStatus,
+        },
       });
     } catch (e) {
       return res.status(500).json({success: 0, message: 'Error getUser'});
@@ -104,9 +115,8 @@ class UserController {
   async verification(req, res) {
     try {
       const {id} = req.user;
-      const {national, passportId, firstName, lastName, faceImage} = req.body;
-      // const result = await userService.withdraw(usernameId, {amount, coin, network, address});
-      const result = await userService.verification(id, national, passportId, firstName, lastName, faceImage);
+      const {national, passportId, firstName, lastName, faceImage, passportImage} = req.body;
+      const result = await userService.verification(id, national, passportId, firstName, lastName, faceImage, passportImage);
       res.json({success: 1});
     } catch (e) {
       return res.status(500).json({success: 0, message: 'Failed to add verification'});
@@ -117,15 +127,12 @@ class UserController {
     try {
       const {id} = req.user;
       const {baseAsset, baseValue, quoteAsset, quoteValue} = req.body;
-      // const result = await userService.withdraw(usernameId, {amount, coin, network, address});
-      // const result = await userService.verification(id, national,passportId,firstName,lastName,faceImage)
       const user = await User.findById(id);
-      //const balance = Number(user.balance[coin]) + Number(amount);
       if (user) {
         const balanceQuote = Number(user.balance[quoteAsset]) + Number(quoteValue);
         const balanceBase = Number(user.balance[baseAsset]) + Number(baseValue);
 
-        const newBalance = {...user.balance, [baseAsset]: balanceBase, [quoteAsset]: balanceQuote}
+        const newBalance = {...user.balance, [baseAsset]: balanceBase, [quoteAsset]: balanceQuote};
         await User.findByIdAndUpdate(id, {balance: newBalance});
       } else {
         const error = new Error();

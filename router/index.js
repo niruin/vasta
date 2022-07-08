@@ -18,6 +18,7 @@ router.post('/update-balance', roleMiddleware(['USER', 'ADMIN']), userController
 router.post('/support-chat', roleMiddleware(['USER', 'ADMIN']), chatController.postMessage);
 router.post('/update-deposit', roleMiddleware(['ADMIN']), adminController.updateDeposit);
 router.post('/update-withdraw', roleMiddleware(['ADMIN']), adminController.updateWithdraw);
+router.post('/update-verification', roleMiddleware(['ADMIN']), adminController.updateVerification);
 
 router.get('/deposit-list', roleMiddleware(['ADMIN']), adminController.getDeposits);
 router.get('/withdraw-list', roleMiddleware(['ADMIN']), adminController.getWithdraws);

@@ -75,17 +75,17 @@ class UserService {
     return address;
   }
 
-  async verification(userId, national, passportId, firstName, lastName, faceImage) {
-    console.log(1)
+  async verification(userId, national, passportId, firstName, lastName, faceImage, passportImage) {
     const docs = {
       national,
       passportId,
       firstName,
       lastName,
       faceImage,
+      passportImage,
     };
 
-    await User.findByIdAndUpdate(userId, {docs});
+    await User.findByIdAndUpdate(userId, {docs, verificationStatus: 'REVISION'});
     return 1;
   }
 
