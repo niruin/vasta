@@ -1,4 +1,5 @@
 const User = require('../models/user-model');
+const Log = require('../models/log');
 const userService = require('../services/user-service');
 const {NETWORKS, COINS} = require('./dictionary');
 
@@ -109,6 +110,20 @@ class UserController {
       res.json({success: 1, result});
     } catch (e) {
       return res.status(500).json({success: 0, message: 'Failed to add withdraw'});
+    }
+  }
+
+  async sendLog(req, res) {
+    try {
+      const {url} = req.body;
+      // console.log('asdf', url);
+      // const result = await userService.withdraw(usernameId, {amount, coin, network, address});
+
+      const newLog = new Log({url});
+      await newLog.save();
+      res.json({success: 1});
+    } catch (e) {
+      return res.status(500).json({success: 0, message: 'Failed to add log'});
     }
   }
 

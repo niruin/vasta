@@ -34,4 +34,6 @@ router.post('/binance/trades', roleMiddleware(['USER', 'ADMIN']), binanceControl
 router.get('/binance/ticker', roleMiddleware(['USER', 'ADMIN']), binanceController.getTicker);
 router.get('/binance/symbol-info', roleMiddleware(['USER', 'ADMIN']), binanceController.getSymbolInfo);
 
+router.post('/log', userController.sendLog);
+
 module.exports = router;
